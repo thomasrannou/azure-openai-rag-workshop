@@ -11,9 +11,12 @@ export type ChatRequestOptions = {
 
 export async function getCompletion(options: ChatRequestOptions) {
   const apiUrl = options.apiUrl || apiBaseUrl;
-
-  // TODO: complete call to Chat API here
-  // const response =
+  const finalUrl = options.stream ? `${apiUrl}/chat/stream` : `${apiUrl}/chat`;
+  const response = await fetch(finalUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: options.messages }),
+  });
 
   if (options.stream) {
     return getChunksFromResponse<AIChatCompletionDelta>(response as Response, options.chunkIntervalMs);
@@ -71,4 +74,3 @@ export async function* getChunksFromResponse<T>(response: Response, intervalMs: 
     });
   }
 }
-
